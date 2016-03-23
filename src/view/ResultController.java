@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -29,6 +30,7 @@ public class ResultController {
 
 	@FXML
     private void initialize() {
+		resultTable.setPlaceholder(new Label("No results yet"));
 		for (Result result : resultList){
 			results.add(result);
 		}
