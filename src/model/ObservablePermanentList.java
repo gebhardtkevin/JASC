@@ -38,9 +38,11 @@ package model;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -74,7 +76,8 @@ public class ObservablePermanentList extends SimpleListProperty<MenuItem>{
 		if (!file.exists()){
 			add(new MenuItem("0"));
 		}
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BufferedReader reader =  new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+
 		String firstLine = reader.readLine();
 		if (null==firstLine){
 			add(new MenuItem("0"));
@@ -104,7 +107,7 @@ public class ObservablePermanentList extends SimpleListProperty<MenuItem>{
 			firstStart = true;
 			remove(0);
 		}
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"UTF-8"));
 		Iterator<MenuItem> it = iterator();
 		while(it.hasNext()){
 			writer.write(it.next().getText());
@@ -127,7 +130,7 @@ public class ObservablePermanentList extends SimpleListProperty<MenuItem>{
 	 */
 	public void addAndSave(MenuItem item, File file) throws IOException{
 		add(0,item);
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file,true));
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file,true),"UTF-8"));
 		writer.write(item.getText());
 		writer.newLine();
 		writer.close();
