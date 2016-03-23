@@ -1,5 +1,5 @@
 /*
-*   ResultList - extended FILO list with auto-update for teh view with support for saving and recreating the list from persistent storage 
+*   ResultList - extended FILO list with auto-update for the view with support for saving and recreating the list from persistent storage 
 *
 *   Copyright 2016 Kevin Gebhardt <gebhardt.kevin@gmail.com>
 *

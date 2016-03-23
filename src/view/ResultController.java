@@ -1,7 +1,5 @@
 package view;
 
-import java.io.File;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

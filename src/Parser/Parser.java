@@ -164,7 +164,13 @@ public class Parser {
         } else { // numbers
             if (token.getType().equals(Token.Type.NUMBER)){
             	value = token.getValue();
-            	token = lexer.getNextToken();
+            	if (Double.isNaN(value)){
+            		token = new Token();
+            		token.setType(Token.Type.END);
+            		return Double.NaN;
+            	}else{
+            		token = lexer.getNextToken();
+            	}
             }else{
             	return Double.NaN;
             }

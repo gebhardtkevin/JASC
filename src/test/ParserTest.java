@@ -64,7 +64,7 @@ public class ParserTest {
 		String expression = "5+3fail";
 		Parser parser = new Parser(expression);
 		double value = parser.parse();
-		assertEquals("Failed: " + expression,value,Double.NaN, 0.000001);
+		assertTrue("Failed: " + expression,Double.isNaN(value));
 	}
 	
 	@Test
@@ -72,7 +72,7 @@ public class ParserTest {
 		String expression = "5+fail3";
 		Parser parser = new Parser(expression);
 		double value = parser.parse();
-		assertEquals("Failed: " + expression,value,Double.NaN, 0.000001);
+		assertTrue("Failed: " + expression,Double.isNaN(value));
 	}
 	
 	@Test

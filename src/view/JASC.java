@@ -54,7 +54,6 @@ public class JASC extends Application {
     public static final File EXPRESSION_FILE = new File("expressions"); 
     public static final File RESULT_FILE = new File("results"); 
     public static final String VERSION = "v1.2";
-//    private ObservablePermanentList expressions=new ObservablePermanentList(EXPRESSION_FILE);
     
     /*
      * Main
@@ -128,26 +127,4 @@ public class JASC extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
-//    /*
-//     * loads expression-list from file
-//     * 
-//     * @returns a list containing all former expressions
-//     */
-//    public PermanentExpressionList getExpressions(boolean create){
-//    	if (create){
-//	        try {
-//	   			expressions.loadFromFile();
-//	   		} catch (IOException e) {
-//	   			System.out.println("No expression File found. Will try to create a new one...");
-//	   			try {
-//					expressions.saveToFile();
-//					System.out.println("Success!");
-//				} catch (IOException e1) {
-//					System.err.println("Could not create expression file. Maybe missing rights?");	
-//				}
-//	   		}
-//    	}
-//        return expressions;	
-//    }
 }

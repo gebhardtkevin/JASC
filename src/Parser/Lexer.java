@@ -79,8 +79,10 @@ public class Lexer {
 				case " ":  		 pos++;token=getNextToken();break;
 				default:
 					double val = getNumber();
-					if (val==Double.NaN){
-						throw new UnsupportedOperationException("Expression contains unknown Token");						
+					if (Double.isNaN(val)){
+						System.err.println("Expression contains unknown Token");	
+						token.setType(Token.Type.NUMBER);
+						token.setValue(Double.NaN);
 					}else{
 						token.setType(Token.Type.NUMBER);
 						token.setValue(val);

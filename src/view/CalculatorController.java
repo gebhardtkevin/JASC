@@ -67,7 +67,8 @@ public class CalculatorController {
 
 	private ResultList results = ResultList.getInstance(JASC.RESULT_FILE);
 	// Reference to the main application.
-    private JASC calculatorViewLoader;
+    @SuppressWarnings("unused")
+	private JASC calculatorViewLoader;
 
     public CalculatorController() {
     }
