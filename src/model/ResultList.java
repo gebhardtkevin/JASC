@@ -75,7 +75,7 @@ public class ResultList extends LinkedList<String>{
 			BufferedReader resultReader = new BufferedReader(new FileReader(file));
 			String result;
 			while (null!=(result = resultReader.readLine())){
-				this.add(result);
+				this.addFirst(result);
 			}
 			resultReader.close();
 	}
