@@ -108,10 +108,14 @@ public class CalculatorController {
     @FXML
     private void onNumberButtonClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	int pos = textField.getCaretPosition();
     	String additionalText = ((Button)event.getSource()).getText();
-    	textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
-    	textField.selectRange(pos+1, pos+1);
+    	if (textField.getSelection().getLength()==0){
+    		int pos = textField.getCaretPosition();
+    		textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
+    		textField.selectRange(pos+additionalText.length(), pos+additionalText.length());
+    	}else{
+    		textField.replaceSelection(additionalText);
+    	}
     }
 
     /**
@@ -122,10 +126,14 @@ public class CalculatorController {
     @FXML
     private void onOperationButtonClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	int pos = textField.getCaretPosition();
     	String additionalText = ((Button)event.getSource()).getText();
-    	textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
-    	textField.selectRange(pos+1, pos+1);
+    	if (textField.getSelection().getLength()==0){
+    		int pos = textField.getCaretPosition();
+    		textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
+    		textField.selectRange(pos+additionalText.length(), pos+additionalText.length());
+    	}else{
+    		textField.replaceSelection(additionalText);
+    	}
     }
     
     /**
@@ -179,10 +187,14 @@ public class CalculatorController {
     @FXML
     private void onANSClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	int pos = textField.getCaretPosition();
-    	String additionalText = results.getFirst();    	
-    	textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
-    	textField.selectRange(pos+1, pos+1);
+    	String additionalText = results.getFirst(); 
+    	if (textField.getSelection().getLength()==0){
+    		int pos = textField.getCaretPosition();   	
+    		textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
+    		textField.selectRange(pos+1, pos+1);
+    	}else{
+    		textField.replaceSelection(additionalText);
+    	}
     }
     
     /**
@@ -218,9 +230,13 @@ public class CalculatorController {
      */
     @FXML
     private void restoreCalculation(ActionEvent event){
-    	int pos = textField.getCaretPosition();
       	String additionalText = ((MenuItem)event.getSource()).getText();
-    	textField.appendText(additionalText);
-    	textField.selectRange(pos+additionalText.length(), pos+additionalText.length());
+    	if (textField.getSelection().getLength()==0){
+    		int pos = textField.getCaretPosition();
+    		textField.appendText(additionalText);
+    		textField.selectRange(pos+additionalText.length(), pos+additionalText.length());
+    	}else{
+    		textField.replaceSelection(additionalText);
+    	}
   }  
 }
