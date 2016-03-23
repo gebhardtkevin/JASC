@@ -36,9 +36,19 @@
 
 package view;
 
+import java.io.IOException;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.control.MenuItem;
+import javafx.stage.Stage;
+import model.PermanentExpressionList;
 
 public class RootController {
 	
@@ -55,6 +65,50 @@ private JASC calculatorViewLoader;
 private void onClose(){
 	Platform.exit();
 	System.exit(0);
+}
+
+@FXML
+private void onShowResultList(){
+	 Stage stage = new Stage();
+     stage.centerOnScreen();
+     stage.setTitle("Calculator");
+     initResultLayout(stage);
+	 stage.show();
+}
+
+private void initResultLayout(Stage stage) {
+	  // Load root layout from fxml file.
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(JASC.class.getResource("results.fxml"));
+    BorderPane resultLayout;
+	try {
+		resultLayout = (BorderPane) loader.load();
+	    // Show the scene containing the root layout.
+	    Scene scene = new Scene(resultLayout);
+	    stage.setScene(scene);
+	    stage.show();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+}
+
+@FXML
+private void onDeleteExpressions(){
+	PermanentExpressionList.getInstance().clear();
+}
+
+@FXML
+private void onAbout(){
+	Alert alert = new Alert(AlertType.INFORMATION);
+	alert.setTitle("JASC " + JASC.VERSION );
+	alert.setHeaderText(null);
+	alert.setContentText("Just another small calculator" 
+						 + System.lineSeparator() + 
+						 "\u00a9 2016 Kevin Gebhardt"
+						 + System.lineSeparator() + 
+						 "gebhardt.kevin@gmail.com"
+						 );
+	alert.showAndWait();
 }
 /**
  * Is called by the main application to give a reference back to itself.

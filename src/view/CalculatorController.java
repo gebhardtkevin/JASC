@@ -37,6 +37,7 @@
 package view;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import Parser.Parser;
 import javafx.event.ActionEvent;
@@ -47,12 +48,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
-import model.ObservablePermanentList;
+import model.PermanentExpressionList;
 import model.ResultList;
 
 public class CalculatorController {
 	@FXML
-	private ObservablePermanentList expressions;
+	private PermanentExpressionList expressions;
 	@FXML
 	private SplitMenuButton splitMenuButton;
 	@FXML
@@ -62,7 +63,7 @@ public class CalculatorController {
 	@FXML
 	private Label result;
 
-	private ResultList results = ResultList.getInstance();
+	private ResultList results = ResultList.getInstance(JASC.RESULT_FILE);
 	// Reference to the main application.
     private JASC calculatorViewLoader;
 
@@ -75,14 +76,23 @@ public class CalculatorController {
      */   
     @FXML
     private void initialize() {
-        expressions = new ObservablePermanentList(splitMenuButton.getItems());
         try {
-			results.loadFromPermanent(JASC.RESULT_FILE);
+			results.loadFromPermanent();
 		} catch (IOException e) {
 			//we can't load any results, so the best will be to do nothing
-			System.err.println("Can't load results file");
+			System.err.println("Can't load result file");
 		}
         textField.end();
+        this.expressions = PermanentExpressionList.getInstance(splitMenuButton.getItems(),JASC.EXPRESSION_FILE);
+        try {
+        	this.expressions.loadFromFile();
+		} catch (IOException e) {
+			//we can't load any results, so the best will be to do nothing
+			System.err.println("Can't load expression file");
+		}
+        for (MenuItem item :this.expressions){
+        	item.setOnAction(this::restoreCalculation);
+        }
     }
     
 
@@ -93,11 +103,6 @@ public class CalculatorController {
      */
     public void setMainApp(JASC calculatorViewLoader) {
         this.calculatorViewLoader = calculatorViewLoader;
-        ObservablePermanentList list = this.calculatorViewLoader.getExpressions();
-        for (MenuItem item :list){
-        	item.setOnAction(this::restoreCalculation);
-            expressions.add(item);
-        }
     }
 
     /**
@@ -187,7 +192,12 @@ public class CalculatorController {
     @FXML
     private void onANSClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	String additionalText = results.getFirst(); 
+    	String additionalText;
+    	try{
+    		additionalText = results.getFirst().getResult().getValue();
+    	} catch (NoSuchElementException e){
+    		additionalText="0";
+    	} 
     	if (textField.getSelection().getLength()==0){
     		int pos = textField.getCaretPosition();   	
     		textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
@@ -210,10 +220,10 @@ public class CalculatorController {
     	result.setText(String.format("%s",parser.parse()));
     	if (!result.getText().equals("NaN")){
     		try {
-    			results.addAndSave(result.getText(),JASC.RESULT_FILE);
+    			results.addAndSave(result.getText());
         		MenuItem item = new MenuItem(expressionString);
         		item.setOnAction(this::restoreCalculation);
-    			expressions.addAndSave(item, JASC.EXPRESSION_FILE);
+    			this.expressions.addAndSave(item);
     		} catch (IOException e) {
     			System.err.println("Could not write to File. Maybe missing rights?");
     			e.printStackTrace();

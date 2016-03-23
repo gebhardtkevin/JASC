@@ -40,25 +40,21 @@ import java.io.File;
 import java.io.IOException;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import model.ObservablePermanentList;
 
 public class JASC extends Application {
 
-    private Stage primaryStage;
+	private Stage primaryStage;
     private BorderPane rootLayout;
 
-    public static File EXPRESSION_FILE = new File("expressions"); 
-    public static File RESULT_FILE = new File("results"); 
-    
-    private ObservablePermanentList expressions=new ObservablePermanentList();
+    public static final File EXPRESSION_FILE = new File("expressions"); 
+    public static final File RESULT_FILE = new File("results"); 
+    public static final String VERSION = "v1.2";
+//    private ObservablePermanentList expressions=new ObservablePermanentList(EXPRESSION_FILE);
     
     /*
      * Main
@@ -106,34 +102,13 @@ public class JASC extends Application {
             // Load calculator
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(JASC.class.getResource("calculator.fxml"));            
+
             AnchorPane calculator = (AnchorPane) loader.load();
-            
             // Give the controller access to the main app
             CalculatorController controller = loader.getController();
             controller.setMainApp(this);
-            
-            //get key bindings
-//            rootLayout.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
-//                public void handle(KeyEvent ke) {
-//                    if (ke.getCode() == KeyCode.ENTER) {
-//                    	controller.calculate(null);
-//                    	ke.consume();
-//                    }
-//                    if (ke.getCode() == KeyCode.BACK_SPACE) {
-//                    	if (controller.lastCaret-1>=0){
-//                    		controller.textField.deleteText(controller.lastCaret-1, controller.lastCaret);
-//                    		controller.lastCaret--;
-//                    		ke.consume();
-//                    	}
-//                    }
-//                    if (ke.getCode() == KeyCode.DELETE) {
-//                    	if (controller.lastCaret+1<=controller.textField.getLength()){
-//                    		controller.textField.deleteText(controller.lastCaret, controller.lastCaret+1);
-//                    		ke.consume();
-//                    	}
-//                    }
-//                }
-//            });      
+
+     
             // Set calculator into the center of root layout.
             rootLayout.setCenter(calculator);
 
@@ -154,23 +129,25 @@ public class JASC extends Application {
         launch(args);
     }
     
-    /*
-     * loads expression-list from file
-     * 
-     * @returns a list containing all former expressions
-     */
-    public ObservablePermanentList getExpressions(){
-        try {
-   			expressions.loadFromFile(EXPRESSION_FILE);
-   		} catch (IOException e) {
-   			System.out.println("No expression File found. Will try to create a new one...");
-   			try {
-				expressions.saveToFile(RESULT_FILE);
-				System.out.println("Success!");
-			} catch (IOException e1) {
-				System.err.println("Could not create expression file. Maybe missing rights?");	
-			}
-   		}
-        return expressions;	
-    }
+//    /*
+//     * loads expression-list from file
+//     * 
+//     * @returns a list containing all former expressions
+//     */
+//    public PermanentExpressionList getExpressions(boolean create){
+//    	if (create){
+//	        try {
+//	   			expressions.loadFromFile();
+//	   		} catch (IOException e) {
+//	   			System.out.println("No expression File found. Will try to create a new one...");
+//	   			try {
+//					expressions.saveToFile();
+//					System.out.println("Success!");
+//				} catch (IOException e1) {
+//					System.err.println("Could not create expression file. Maybe missing rights?");	
+//				}
+//	   		}
+//    	}
+//        return expressions;	
+//    }
 }

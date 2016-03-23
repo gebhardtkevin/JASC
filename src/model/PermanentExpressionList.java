@@ -39,31 +39,56 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.List;
+
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.MenuItem;
 
-public class ObservablePermanentList extends SimpleListProperty<MenuItem>{
+public class PermanentExpressionList extends SimpleListProperty<MenuItem>{
 	/*
 	 * construct an empty list
 	 */
-	public ObservablePermanentList(){
+	private File file;
+	private static PermanentExpressionList instance = null;
+	boolean firstStart=false;
+	
+	private PermanentExpressionList(File file){
 		super(FXCollections.observableArrayList());	
+		this.file=file;
 	}
 	
 	/*
 	 * copy-constructor
 	 */
-	public ObservablePermanentList(ObservableList<MenuItem> list){
+	private PermanentExpressionList(ObservableList<MenuItem> list, File file){
 			super(list);
+			this.file=file;
 	}
 	
+	public static PermanentExpressionList getInstance(){
+		if (instance == null){
+			System.err.println("List is not initialised yet!");
+			throw new NullPointerException();
+		}
+		return instance;
+	}
+	
+	public static PermanentExpressionList getInstance(ObservableList<MenuItem> list,File file){
+		if (instance == null){
+			instance =  new PermanentExpressionList(list,file);
+		}
+		return instance;
+	}
+
 	/*
 	 * loadFromFile 
 	 * 
@@ -72,7 +97,7 @@ public class ObservablePermanentList extends SimpleListProperty<MenuItem>{
 	 * @param File the file to load 
 	 * 
 	 */
-	public void loadFromFile(File file) throws IOException{
+	public void loadFromFile() throws IOException{
 		if (!file.exists()){
 			add(new MenuItem("0"));
 		}
@@ -80,11 +105,10 @@ public class ObservablePermanentList extends SimpleListProperty<MenuItem>{
 
 		String firstLine = reader.readLine();
 		if (null==firstLine){
-			add(new MenuItem("0"));
+			add(0,new MenuItem("0"));
 		}else{
-			add(new MenuItem(firstLine));
+			add(0,new MenuItem(firstLine));
 		}
-		
 		String line;
 		while (null != (line = reader.readLine())){
 			add(0,new MenuItem(line));				
@@ -100,9 +124,8 @@ public class ObservablePermanentList extends SimpleListProperty<MenuItem>{
 	 * @param File were to save
 	 * 
 	 */
-	public void saveToFile(File file) throws IOException{
+	public void saveToFile() throws IOException{
 		//remove the placeholder, if necessary
-		boolean firstStart=false;
 		if (!file.exists()){
 			firstStart = true;
 			remove(0);
@@ -128,11 +151,38 @@ public class ObservablePermanentList extends SimpleListProperty<MenuItem>{
 	 * @param file were to save 
 	 * 
 	 */
-	public void addAndSave(MenuItem item, File file) throws IOException{
+	public void addAndSave(MenuItem item) throws IOException{
+		if (firstStart){
+			remove(0);
+		}
 		add(0,item);
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file,true),"UTF-8"));
 		writer.write(item.getText());
 		writer.newLine();
 		writer.close();
+	}
+	
+	public void addAndSaveAll(List<MenuItem> items) throws IOException{
+		addAll(items);
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file,true),"UTF-8"));
+		for (MenuItem item:items){
+			writer.write(item.getText());
+			writer.newLine();
+		}
+		writer.close();
+	}
+	
+	@Override
+	public void clear(){
+		super.clear();
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter(file);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		add(new MenuItem("0"));
+		firstStart=true;
 	}
 }

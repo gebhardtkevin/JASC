@@ -38,27 +38,30 @@ package model;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 
-public class ResultList extends LinkedList<String>{
+public class ResultList extends LinkedList<Result>{
 	
 	private static final long serialVersionUID = -1305599998299292076L;
-	
+	File file;
 	/*
 	 * We only need one ResultList in the application, so this class is singleton for easy access from the controllers
 	 */
 	private static ResultList instance = null; 
 	
-	private ResultList(){
+	private ResultList(File file){
 		super();
+		this.file=file;
 	}
 	
-	public static ResultList getInstance(){
+	public static ResultList getInstance(File file){
 		if (instance==null){
-			instance = new ResultList();
+			instance = new ResultList(file);
 		}
 		return instance;
 	}
@@ -71,11 +74,11 @@ public class ResultList extends LinkedList<String>{
 	 * @param File the file to load 
 	 * 
 	 */
-	public void loadFromPermanent(File file) throws IOException{
+	public void loadFromPermanent() throws IOException{
 			BufferedReader resultReader = new BufferedReader(new FileReader(file));
 			String result;
 			while (null!=(result = resultReader.readLine())){
-				this.addFirst(result);
+				this.addFirst(new Result(result));
 			}
 			resultReader.close();
 	}
@@ -88,10 +91,10 @@ public class ResultList extends LinkedList<String>{
 	 * @param File were to save
 	 * 
 	 */
-	public void saveToPermanent(File file)throws IOException{
+	public void saveToPermanent()throws IOException{
 			BufferedWriter resultWriter = new BufferedWriter(new FileWriter(file,false));
-			for (String result:this){
-				resultWriter.write(result);
+			for (Result result:this){
+				resultWriter.write(result.getResult().getValue());
 				resultWriter.newLine();
 			}
 			resultWriter.close();
@@ -106,11 +109,34 @@ public class ResultList extends LinkedList<String>{
 	 * @param file were to save 
 	 * 
 	 */
-	public void addAndSave(String value, File file) throws IOException{
-		addFirst(value);
+	public void addAndSave(String value) throws IOException{
+		addFirst(new Result(value));
 		BufferedWriter writer = new BufferedWriter(new FileWriter(file,true));
 		writer.write(value);
 		writer.newLine();
 		writer.close();
 	}
+	
+	@Override
+	public void clear(){
+		super.clear();
+		try {
+			PrintWriter writer = new PrintWriter(file);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public Result remove(int position){
+		Result result = super.remove(position);
+		try {
+			saveToPermanent();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 }
