@@ -113,27 +113,27 @@ public class JASC extends Application {
             controller.setMainApp(this);
             
             //get key bindings
-            rootLayout.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
-                public void handle(KeyEvent ke) {
-                    if (ke.getCode() == KeyCode.ENTER) {
-                    	controller.calculate(null);
-                    	ke.consume();
-                    }
-                    if (ke.getCode() == KeyCode.BACK_SPACE) {
-                    	if (controller.lastCaret-1>=0){
-                    		controller.textField.deleteText(controller.lastCaret-1, controller.lastCaret);
-                    		controller.lastCaret--;
-                    		ke.consume();
-                    	}
-                    }
-                    if (ke.getCode() == KeyCode.DELETE) {
-                    	if (controller.lastCaret+1<=controller.textField.getLength()){
-                    		controller.textField.deleteText(controller.lastCaret, controller.lastCaret+1);
-                    		ke.consume();
-                    	}
-                    }
-                }
-            });      
+//            rootLayout.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
+//                public void handle(KeyEvent ke) {
+//                    if (ke.getCode() == KeyCode.ENTER) {
+//                    	controller.calculate(null);
+//                    	ke.consume();
+//                    }
+//                    if (ke.getCode() == KeyCode.BACK_SPACE) {
+//                    	if (controller.lastCaret-1>=0){
+//                    		controller.textField.deleteText(controller.lastCaret-1, controller.lastCaret);
+//                    		controller.lastCaret--;
+//                    		ke.consume();
+//                    	}
+//                    }
+//                    if (ke.getCode() == KeyCode.DELETE) {
+//                    	if (controller.lastCaret+1<=controller.textField.getLength()){
+//                    		controller.textField.deleteText(controller.lastCaret, controller.lastCaret+1);
+//                    		ke.consume();
+//                    	}
+//                    }
+//                }
+//            });      
             // Set calculator into the center of root layout.
             rootLayout.setCenter(calculator);
 

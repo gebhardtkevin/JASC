@@ -43,6 +43,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.IndexRange;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
@@ -59,10 +60,7 @@ public class CalculatorController {
 	@FXML
 	public TextField textField;
 	@FXML
-	private TextField result;
-	
-	public int lastCaret;
-	private IndexRange lastSelection;
+	private Label result;
 
 	private ResultList results = ResultList.getInstance();
 	// Reference to the main application.
@@ -85,18 +83,6 @@ public class CalculatorController {
 			System.err.println("Can't load results file");
 		}
         textField.end();
-    	lastSelection = new IndexRange(textField.getLength(), textField.getLength());
-        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-               this.lastCaret = textField.getCaretPosition();
-               if (textField.getSelection().getLength()!=0){
-            	   this.lastSelection = textField.getSelection();
-               }
-               else{
-            	  	this.lastSelection = new IndexRange(this.lastCaret, this.lastCaret);          	   
-               }
-            }
-        });
     }
     
 
@@ -122,10 +108,10 @@ public class CalculatorController {
     @FXML
     private void onNumberButtonClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	int pos = this.lastCaret;
-    	this.lastCaret++;
+    	int pos = textField.getCaretPosition();
     	String additionalText = ((Button)event.getSource()).getText();
     	textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
+    	textField.selectRange(pos+1, pos+1);
     }
 
     /**
@@ -136,10 +122,10 @@ public class CalculatorController {
     @FXML
     private void onOperationButtonClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	int pos = this.lastCaret;
-    	this.lastCaret++;
+    	int pos = textField.getCaretPosition();
     	String additionalText = ((Button)event.getSource()).getText();
     	textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
+    	textField.selectRange(pos+1, pos+1);
     }
     
     /**
@@ -152,15 +138,14 @@ public class CalculatorController {
     @FXML
     private void onParenthesisClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	IndexRange pos = this.lastSelection;
+    	IndexRange pos = textField.getSelection();
     	if (pos.getLength()==0){
-        	textField.setText(formerText.substring(0,this.lastCaret) + "()" +  formerText.substring(this.lastCaret));    		
-        	this.lastCaret++;
+        	textField.setText(formerText.substring(0,pos.getStart()) + "()" +  formerText.substring(pos.getEnd()));    		
+        	textField.selectRange(pos.getEnd()+1, pos.getEnd()+1);
     	}else{
-        	this.lastSelection = new IndexRange(textField.getLength()+2, textField.getLength()+2);
         	String selectedText = formerText.substring(pos.getStart(),pos.getEnd()).trim();
-        	this.lastCaret=pos.getStart()+selectedText.length()+2;
         	textField.setText(formerText.substring(0, pos.getStart()) + "(" + selectedText +")" +  formerText.substring(pos.getEnd()));    		
+        	textField.selectRange(pos.getEnd()+2, pos.getEnd()+2);
     	}
     }
     
@@ -174,15 +159,14 @@ public class CalculatorController {
     @FXML
     private void onSqrtClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	IndexRange pos = this.lastSelection;
+    	IndexRange pos = textField.getSelection();
     	if (pos.getLength()==0){
-        	textField.setText(formerText.substring(0,this.lastCaret) + "\u221A()" +  formerText.substring(this.lastCaret));    		
-        	this.lastCaret+=2;
+        	textField.setText(formerText.substring(0,pos.getStart()) + "\u221A()" +  formerText.substring(pos.getEnd()));    		
+        	textField.selectRange(pos.getEnd()+2, pos.getEnd()+2);
     	}else{
-        	this.lastSelection = new IndexRange(textField.getLength()+3, textField.getLength()+3);
         	String selectedText = formerText.substring(pos.getStart(),pos.getEnd()).trim();
-        	this.lastCaret=pos.getStart()+selectedText.length()+3;
         	textField.setText(formerText.substring(0, pos.getStart()) + "\u221A(" + selectedText +")" +  formerText.substring(pos.getEnd()));    		
+        	textField.selectRange(pos.getEnd()+3, pos.getEnd()+3);
     	}
     }
     
@@ -195,10 +179,10 @@ public class CalculatorController {
     @FXML
     private void onANSClicked(ActionEvent event){
     	String formerText = textField.getText();
-    	int pos = this.lastCaret;
+    	int pos = textField.getCaretPosition();
     	String additionalText = results.getFirst();    	
-    	this.lastCaret+=additionalText.length();
     	textField.setText(formerText.substring(0, pos) + additionalText + formerText.substring(pos));
+    	textField.selectRange(pos+1, pos+1);
     }
     
     /**
@@ -223,8 +207,6 @@ public class CalculatorController {
     			e.printStackTrace();
     		}
     		textField.clear();
-    		lastCaret=0;
-    		lastSelection=new IndexRange(0,0);
     	}
     }
     
@@ -236,8 +218,9 @@ public class CalculatorController {
      */
     @FXML
     private void restoreCalculation(ActionEvent event){
+    	int pos = textField.getCaretPosition();
       	String additionalText = ((MenuItem)event.getSource()).getText();
     	textField.appendText(additionalText);
-    	this.lastCaret += additionalText.length();
+    	textField.selectRange(pos+additionalText.length(), pos+additionalText.length());
   }  
 }
