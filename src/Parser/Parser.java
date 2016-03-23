@@ -119,7 +119,7 @@ public class Parser {
             if (token.getType().equals(Token.Type.DIVIDE)) { // division
                 token = lexer.getNextToken();
                 value /= parseFactor();
-            } else if (token.getType().equals(Token.Type.MULTIPLY)|| token.getType().equals(Token.Type.LPAREN)) { // multiplication
+            } else if (token.getType().equals(Token.Type.MULTIPLY)|| token.getType().equals(Token.Type.LPAREN)|| token.getType().equals(Token.Type.SQRT)) { // multiplication
                 if (token.getType().equals(Token.Type.MULTIPLY)) {
                 	token=lexer.getNextToken();
                 }
